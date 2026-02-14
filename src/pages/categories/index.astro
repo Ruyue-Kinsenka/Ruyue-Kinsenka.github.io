@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCategorySummary } from "@/utils/posts";
+
+const categories = await getCategorySummary();
+---
+
+<BaseLayout title="全部分类 · Ruyue" description="按主题分类浏览所有文章">
+  <section class="panel">
+    <h1 class="page-title">分类</h1>
+    <p class="page-subtitle">共 {categories.length} 个分类。</p>
+
+    {
+      categories.length === 0 ? (
+        <p class="muted">还没有可展示的分类。</p>
+      ) : (
+        <ul class="muted">
+          {
+            categories.map((item) => (
+              <li>
+                <a href={`/categories/${encodeURIComponent(item.name)}/`}>
+                  {item.name} ({item.count})
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      )
+    }
+  </section>
+</BaseLayout>

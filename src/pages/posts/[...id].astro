@@ -1,0 +1,50 @@
+---
+import { render } from "astro:content";
+import ArticleEngagement from "@/components/ArticleEngagement.astro";
+import Comments from "@/components/Comments.astro";
+import PostMeta from "@/components/PostMeta.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPostUrl, getPublishedPosts } from "@/utils/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+
+  return posts.map((post) => ({
+    params: {
+      id: post.id
+    },
+    props: {
+      post
+    }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const urlPath = getPostUrl(post);
+---
+
+<BaseLayout title={`${post.data.title} · Ruyue`} description={post.data.description}>
+  <article class="article-shell">
+    <h1>{post.data.title}</h1>
+    <p class="page-subtitle">{post.data.description}</p>
+
+    <PostMeta post={post} />
+
+    {
+      post.data.cover && (
+        <figure class="article-cover">
+          <img src={post.data.cover} alt={post.data.coverAlt ?? post.data.title} loading="lazy" />
+        </figure>
+      )
+    }
+
+    <div class="article-content">
+      <Content />
+    </div>
+
+    <ArticleEngagement path={urlPath} title={post.data.title} />
+  </article>
+
+  <Comments path={urlPath} title={post.data.title} />
+</BaseLayout>

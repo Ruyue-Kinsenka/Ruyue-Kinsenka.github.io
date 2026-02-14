@@ -1,0 +1,15 @@
+---
+import TagCloud from "@/components/TagCloud.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getTagSummary } from "@/utils/posts";
+
+const tags = await getTagSummary();
+---
+
+<BaseLayout title="全部标签 · Ruyue" description="按标签探索文章主题">
+  <section>
+    <h1 class="page-title">标签</h1>
+    <p class="page-subtitle">共 {tags.length} 个标签。</p>
+    <TagCloud tags={tags} />
+  </section>
+</BaseLayout>

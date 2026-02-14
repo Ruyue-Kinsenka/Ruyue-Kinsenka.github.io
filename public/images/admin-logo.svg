@@ -1,0 +1,10 @@
+<svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ruyue Admin">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8F7DFF"/>
+      <stop offset="1" stop-color="#4DE5D2"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="178" height="48" rx="12" fill="none" stroke="url(#grad)" stroke-width="2"/>
+  <text x="20" y="32" fill="#111827" font-family="Inter, sans-serif" font-size="20" font-weight="700">Ruyue CMS</text>
+</svg>

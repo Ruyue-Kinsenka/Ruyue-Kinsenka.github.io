@@ -1,0 +1,30 @@
+---
+import type { PostEntry } from "@/utils/posts";
+import { estimateReadMinutes, formatDate } from "@/utils/posts";
+
+interface Props {
+  post: PostEntry;
+}
+
+const { post } = Astro.props;
+const readingMinutes = estimateReadMinutes(post.body ?? "");
+---
+
+<div class="meta-row">
+  <span class="meta-badge">🗓 {formatDate(post.data.publishedAt)}</span>
+  <span class="meta-badge">📚 {post.data.category}</span>
+  <span class="meta-badge">⏱ {readingMinutes} 分钟阅读</span>
+  {
+    post.data.updatedAt && (
+      <span class="meta-badge">♻ 最近更新：{formatDate(post.data.updatedAt)}</span>
+    )
+  }
+</div>
+
+{
+  post.data.tags.length > 0 && (
+    <div class="chips">
+      {post.data.tags.map((tag) => <a class="chip" href={`/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>)}
+    </div>
+  )
+}

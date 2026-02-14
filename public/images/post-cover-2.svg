@@ -1,0 +1,19 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aurora Gradient">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1121"/>
+      <stop offset="0.52" stop-color="#2A335C"/>
+      <stop offset="1" stop-color="#694EE4"/>
+    </linearGradient>
+    <linearGradient id="shape" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="rgba(77,229,210,0.12)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.22)"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg2)"/>
+  <g>
+    <circle cx="270" cy="200" r="170" fill="rgba(143,125,255,0.25)"/>
+    <circle cx="960" cy="460" r="200" fill="rgba(77,229,210,0.2)"/>
+    <path d="M130 590 Q 380 390 640 520 T 1160 420" stroke="url(#shape)" stroke-width="60" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
