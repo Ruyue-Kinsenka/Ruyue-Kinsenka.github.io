@@ -3,29 +3,21 @@ interface TagItem {
   name: string;
   count: number;
 }
-
 interface Props {
   tags: TagItem[];
 }
-
 const { tags } = Astro.props;
 ---
-
-<section class="tag-cloud">
-  <h2>标签云</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 0.8rem;">
   {
     tags.length === 0 ? (
-      <p class="muted">暂无标签。</p>
+      <span style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">No Tags</span>
     ) : (
-      <div class="tag-cloud-list">
-        {
-          tags.map((tag) => (
-            <a class="tag-pill" href={`/tags/${encodeURIComponent(tag.name)}/`}>
-              #{tag.name} ({tag.count})
-            </a>
-          ))
-        }
-      </div>
+      tags.map((tag) => (
+        <a href={`/tags/${encodeURIComponent(tag.name)}/`} class="tag-pill">
+          {tag.name} <span style="opacity: 0.5; margin-left: 0.3rem;">{tag.count}</span>
+        </a>
+      ))
     )
   }
-</section>
+</div>

@@ -1,89 +1,88 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
-
-<BaseLayout title="搜索 · Ruyue" description="按标题、分类、标签和摘要全文检索文章">
-  <section class="search-panel">
-    <h1 class="page-title">搜索文章</h1>
-    <p class="page-subtitle">支持标题、分类、标签和摘要关键词搜索。</p>
-
-    <label for="search-input" class="muted">输入关键词</label>
-    <input id="search-input" class="search-input" type="search" placeholder="例如：设计、诗性、Astro" />
-
-    <div id="search-count" class="muted" style="margin-top: 0.7rem;"></div>
-    <div id="search-results" class="search-results"></div>
-  </section>
-
+<BaseLayout title="Search" description="Search the journal">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 3rem;">Search.</h1>
+    <div style="margin-bottom: 2rem;">
+      <input 
+        id="search-input" 
+        type="search" 
+        placeholder="Type to search entries..."
+        autocomplete="off"
+        style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border); font-size: 1.5rem; font-weight: 300; font-family: inherit; color: var(--text); outline: none; padding: 1rem 0; transition: border-color 0.3s;"
+        onfocus="this.style.borderBottomColor='var(--text)'"
+        onblur="this.style.borderBottomColor='var(--border)'"
+      />
+    </div>
+    <div id="search-stats" style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4rem;">
+      Preparing index...
+    </div>
+    <div id="search-results" style="display: flex; flex-direction: column;"></div>
+  </div>
   <script is:inline>
     const input = document.getElementById("search-input");
     const resultsNode = document.getElementById("search-results");
-    const countNode = document.getElementById("search-count");
-
+    const statsNode = document.getElementById("search-stats");
     let data = [];
-
-    const normalize = (text) => text.toLowerCase().trim();
-
+    const normalize = (text) => text?.toLowerCase().trim().replace(/\s+/g, " ") || "";
     const render = (items, keyword) => {
-      if (!resultsNode || !countNode) return;
-
       if (!keyword) {
-        countNode.textContent = "请输入关键词开始搜索。";
+        statsNode.innerHTML = `Index loaded. ${data.length} records.`;
         resultsNode.innerHTML = "";
         return;
       }
-
-      countNode.textContent = `找到 ${items.length} 条结果`;
-
       if (items.length === 0) {
-        resultsNode.innerHTML = "<article class=\"search-item muted\">未找到相关文章，试试更短或更通用的关键词。</article>";
+        statsNode.innerHTML = `No results.`;
+        resultsNode.innerHTML = ``;
         return;
       }
-
+      statsNode.innerHTML = `${items.length} results found.`;
       resultsNode.innerHTML = items
-        .map(
-          (item) => `
-            <article class="search-item">
-              <a href="${item.url}"><strong>${item.title}</strong></a>
-              <p class="muted">${item.description}</p>
-              <div class="meta-inline">分类：${item.category} · 标签：${item.tags.map((tag) => `#${tag}`).join(" ")}</div>
-            </article>
-          `
-        )
+        .map((item) => {
+          return `
+            <a href="${item.url}" class="list-item-row" style="flex-direction: column; align-items: flex-start; gap: 0.5rem; text-decoration: none; color: inherit;">
+              <div style="font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);">
+                ${item.category}
+              </div>
+              <h3 style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 400; margin: 0; line-height: 1.3;">
+                ${item.title}
+              </h3>
+              <p style="font-size: 0.95rem; line-height: 1.6; color: var(--muted); font-weight: 300; margin: 0.5rem 0 0;">
+                ${item.description || item.content.substring(0, 100) + '...'}
+              </p>
+            </a>
+          `;
+        })
         .join("");
     };
-
-    const handleSearch = () => {
-      const keyword = normalize(input?.value ?? "");
-
-      if (!keyword) {
-        render([], "");
-        return;
-      }
-
+    const performSearch = (keyword) => {
+      const normalizedKeyword = normalize(keyword);
+      if (!normalizedKeyword) return render([], "");
       const filtered = data.filter((item) => {
-        const stack = [item.title, item.description, item.category, item.tags.join(" "), item.content]
-          .join(" ")
-          .toLowerCase();
-        return stack.includes(keyword);
+        const searchText = [item.title, item.description, item.category, item.tags.join(" "), item.content].join(" ").toLowerCase();
+        return searchText.includes(normalizedKeyword);
       });
-
-      render(filtered, keyword);
+      render(filtered, normalizedKeyword);
     };
-
+    let timer;
+    input?.addEventListener("input", (e) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => performSearch(e.target.value), 200);
+    });
     fetch("/search-index.json")
       .then((res) => res.json())
       .then((payload) => {
         data = payload;
-        if (countNode) {
-          countNode.textContent = "索引已加载，可以开始搜索。";
+        statsNode.innerHTML = `Index loaded. ${data.length} records.`;
+        const query = new URLSearchParams(window.location.search).get('q');
+        if (query) {
+          input.value = query;
+          performSearch(query);
         }
       })
       .catch(() => {
-        if (countNode) {
-          countNode.textContent = "搜索索引加载失败，请稍后刷新重试。";
-        }
+        statsNode.innerHTML = `Error loading index.`;
       });
-
-    input?.addEventListener("input", handleSearch);
   </script>
 </BaseLayout>

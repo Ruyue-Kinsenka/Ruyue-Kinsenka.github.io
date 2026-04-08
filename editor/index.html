@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editorial Writer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+    :root {
+      --text: #0f172a;
+      --muted: #64748b;
+      --glass: rgba(255, 255, 255, 0.4);
+      --glass-heavy: rgba(255, 255, 255, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --blue-light: #bae6fd;
+      --pink-light: #fbcfe8;
+      --purple-light: #e9d5ff;
+      --accent: #FFB6C1;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #F0F6F8;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+    }
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      background: #F0F6F8;
+    }
+    .orb {
+      position: absolute;
+      filter: blur(120px);
+      border-radius: 50%;
+      animation: float 30s infinite alternate ease-in-out;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+    }
+    .orb-1 {
+      top: -20%;
+      left: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: var(--blue-light);
+    }
+    .orb-2 {
+      bottom: -20%;
+      right: -10%;
+      width: 70vw;
+      height: 70vw;
+      background: var(--pink-light);
+      animation-delay: -7s;
+    }
+    .orb-3 {
+      top: 30%;
+      left: 30%;
+      width: 50vw;
+      height: 50vw;
+      background: var(--purple-light);
+      animation-delay: -14s;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(5%, 10%) scale(1.1); }
+    }
+    .header-bar {
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: -0.02em;
+    }
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .btn-solid {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-solid:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--text);
+      padding: 0.6rem 1.5rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-outline:hover {
+      background: var(--text);
+      color: #fff;
+    }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-icon:hover {
+      background: rgba(0,0,0,0.05);
+    }
+    .sidebar-toggle {
+      display: none;
+    }
+    .layout-container {
+      flex: 1;
+      display: flex;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+      width: 0;
+      min-width: 0;
+    }
+    .sidebar-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(15,23,42,0.05);
+    }
+    .sidebar-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+    }
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex: 1;
+      padding: 0.5rem;
+    }
+    .post-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .post-list::-webkit-scrollbar-thumb {
+      background: rgba(15,23,42,0.1);
+      border-radius: 4px;
+    }
+    .post-item {
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      border: 1px solid transparent;
+      margin-bottom: 0.25rem;
+    }
+    .post-item:hover {
+      background: rgba(255,255,255,0.5);
+    }
+    .post-item.active {
+      background: #fff;
+      border-color: var(--glass-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .post-item-title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .post-item-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-draft {
+      background: var(--pink-light);
+      color: var(--text);
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      flex: 1;
+      overflow: hidden;
+      background: var(--glass-border);
+    }
+    .edit-area, .preview-area {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .panel-header {
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid rgba(15,23,42,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.3);
+      min-height: 48px;
+    }
+    .panel-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+    }
+    .file-name-label {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .panel-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .panel-body::-webkit-scrollbar-thumb {
+      background: rgba(15,23,42,0.15);
+      border-radius: 4px;
+    }
+    .meta-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(15,23,42,0.08);
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .meta-full {
+      grid-column: span 2;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+    .input-group label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.6;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .form-control:focus {
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
+    }
+    .title-input {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+    }
+    .toolbar-modern {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+    }
+    .tool-btn {
+      background: transparent;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.2s;
+    }
+    .tool-btn:hover {
+      background: var(--text);
+      color: #fff;
+      opacity: 1;
+    }
+    .tag-section {
+      margin-bottom: 1rem;
+    }
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.5rem 0.75rem;
+      min-height: 44px;
+      align-items: center;
+    }
+    .tag-chip {
+      background: var(--text);
+      color: #fff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .tag-chip button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.6;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tag-chip button:hover {
+      opacity: 1;
+    }
+    .tag-container input {
+      flex: 1;
+      min-width: 100px;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.25rem;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      cursor: pointer;
+      width: fit-content;
+    }
+    .toggle-row input {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: var(--text);
+      margin: 0;
+    }
+    .toggle-row span {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .markdown-editor {
+      width: 100%;
+      min-height: 300px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      font-family: "SF Mono", Monaco, "Courier New", monospace;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .markdown-editor:focus {
+      background: #fff;
+      border-color: var(--accent);
+    }
+    .prose-preview {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(15, 23, 42, 0.85);
+      max-width: 100%;
+    }
+    .prose-preview h1 {
+      font-family: var(--font-serif);
+      font-size: 2.25rem;
+      font-weight: 400;
+      color: var(--text);
+      margin: 0 0 1.5rem;
+      line-height: 1.2;
+    }
+    .prose-preview h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--text);
+      margin: 2.5rem 0 1rem;
+      line-height: 1.3;
+    }
+    .prose-preview h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 1.75rem 0 0.75rem;
+    }
+    .prose-preview p {
+      margin-bottom: 1.25rem;
+    }
+    .prose-preview blockquote {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-style: italic;
+      padding-left: 1.5rem;
+      border-left: 3px solid var(--accent);
+      margin: 2rem 0;
+      color: var(--muted);
+    }
+    .prose-preview pre {
+      background: rgba(255,255,255,0.8);
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      font-size: 0.875rem;
+    }
+    .prose-preview code {
+      font-family: "SF Mono", Monaco, "Courier New", monospace;
+      background: rgba(0,0,0,0.05);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.875em;
+    }
+    .prose-preview pre code {
+      background: transparent;
+      padding: 0;
+    }
+    .prose-preview img {
+      max-width: 100%;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .prose-preview a {
+      color: var(--text);
+      border-bottom: 1px solid var(--accent);
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .prose-preview a:hover {
+      border-color: var(--text);
+    }
+    .prose-preview ul, .prose-preview ol {
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+    .prose-preview li {
+      margin-bottom: 0.5rem;
+    }
+    .empty-message {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .status-pill {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: #fff;
+      padding: 0.875rem 2rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .status-pill.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .status-pill.error {
+      background: #ef4444;
+    }
+    .status-pill.success {
+      background: #10b981;
+    }
+
+    .existing-categories {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .categories-label {
+      color: var(--muted);
+    }
+    .categories-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    .category-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .category-chip:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .category-chip.active {
+      background: var(--accent);
+      border-color: var(--text);
+    }
+
+    .input-error {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+      .preview-area {
+        display: none;
+      }
+      .sidebar {
+        position: absolute;
+        z-index: 100;
+        height: 100%;
+      }
+      .sidebar-toggle {
+        display: flex;
+      }
+    }
+
+    /* Collapsible meta section */
+    .meta-collapsible {
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .meta-collapsible.collapsed {
+      max-height: 80px;
+    }
+    .meta-toggle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .meta-toggle:hover {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <header class="header-bar">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <button class="btn-icon sidebar-toggle" onclick="toggleSidebar()" title="切换侧边栏">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="brand-title">编辑器.</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" onclick="createNewPost()">新建草稿</button>
+      <button class="btn-solid" onclick="savePost()">发布文章</button>
+    </div>
+  </header>
+
+  <div class="layout-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">文章列表</div>
+      </div>
+      <div class="post-list" id="postList">
+        <div class="empty-message">加载中...</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="editor-grid">
+        <div class="edit-area">
+          <div class="panel-header">
+            <span class="panel-label">编辑</span>
+            <span class="file-name-label" id="currentFile">未命名</span>
+          </div>
+          <div class="panel-body">
+            <!-- Title -->
+            <div class="input-group meta-full" style="margin-bottom: 1rem;">
+              <input type="text" id="title" class="form-control title-input" placeholder="输入文章标题...">
+            </div>
+
+            <!-- Meta Toggle -->
+            <div class="meta-toggle" onclick="toggleMeta()" id="metaToggle">
+              <span>⚙️ 元数据设置</span>
+              <span id="metaToggleIcon">▼</span>
+            </div>
+
+            <!-- Collapsible Meta Section -->
+            <div class="meta-collapsible collapsed" id="metaSection">
+              <div class="meta-grid">
+                <div class="input-group meta-full">
+                  <label>文章描述</label>
+                  <textarea id="description" class="form-control" placeholder="简短描述文章内容..." rows="2" style="resize: vertical; font-size: 0.9rem;"></textarea>
+                </div>
+                <div class="input-group">
+                  <label>发布日期</label>
+                  <input type="date" id="publishedAt" class="form-control">
+                </div>
+                <div class="input-group">
+                  <label>分类目录</label>
+                  <input type="text" id="category" class="form-control" placeholder="例如：设计" list="categoryList">
+                  <datalist id="categoryList"></datalist>
+                  <div class="existing-categories" id="existingCategories">
+                    <span class="categories-label">已有分类：</span>
+                    <span class="categories-list" id="categoriesList"></span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label>保存文件名</label>
+                  <input type="text" id="filename" class="form-control" placeholder="my-post">
+                </div>
+                <div class="input-group">
+                  <label>封面图片</label>
+                  <input type="text" id="cover" class="form-control" placeholder="/images/cover.jpg">
+                </div>
+                <div class="input-group meta-full tag-section">
+                  <label>文章标签</label>
+                  <div class="tag-container" id="tagInput">
+                    <input type="text" id="tagInputField" placeholder="输入标签按回车添加">
+                  </div>
+                </div>
+                <div class="input-group meta-full">
+                  <label class="toggle-row">
+                    <input type="checkbox" id="draft">
+                    <span>存为草稿（不会在博客显示）</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Editor -->
+            <div class="input-group meta-full">
+              <div class="toolbar-modern">
+                <button class="tool-btn" onclick="insertMarkdown('**', '**')">粗体</button>
+                <button class="tool-btn" onclick="insertMarkdown('*', '*')">斜体</button>
+                <button class="tool-btn" onclick="insertMarkdown('## ', '')">标题2</button>
+                <button class="tool-btn" onclick="insertMarkdown('### ', '')">标题3</button>
+                <button class="tool-btn" onclick="insertMarkdown('- ', '')">列表</button>
+                <button class="tool-btn" onclick="insertMarkdown('> ', '')">引用</button>
+                <button class="tool-btn" onclick="insertMarkdown('```\n', '\n```')">代码</button>
+                <button class="tool-btn" onclick="insertMarkdown('[', '](url)')">链接</button>
+                <button class="tool-btn" onclick="document.getElementById('imageInput').click()">上传图片</button>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+              </div>
+              <textarea id="content" class="markdown-editor" placeholder="开始撰写你的文章..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-area">
+          <div class="panel-header">
+            <span class="panel-label">实时预览</span>
+          </div>
+          <div class="panel-body">
+            <div class="prose-preview" id="preview">
+              <div class="empty-message">预览内容将在这里显示...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="status-pill" id="statusBar">
+    <span id="statusIcon">✦</span>
+    <span id="statusMessage">Saved</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    let posts = [];
+    let currentPost = null;
+    let tags = [];
+    let isMetaCollapsed = true;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPosts();
+      setupTagInput();
+      setupAutoPreview();
+      setupAutoSave();
+      document.getElementById('publishedAt').value = new Date().toISOString().split('T')[0];
+    });
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    function toggleMeta() {
+      const metaSection = document.getElementById('metaSection');
+      const icon = document.getElementById('metaToggleIcon');
+      isMetaCollapsed = !isMetaCollapsed;
+      if (isMetaCollapsed) {
+        metaSection.classList.add('collapsed');
+        icon.textContent = '▼';
+      } else {
+        metaSection.classList.remove('collapsed');
+        icon.textContent = '▲';
+      }
+    }
+
+    async function loadPosts() {
+      try {
+        const response = await fetch('/api/posts');
+        posts = await response.json();
+        renderPostList();
+        updateCategoryList();
+      } catch (error) {
+        document.getElementById('postList').innerHTML = `<div class="empty-message">加载失败</div>`;
+      }
+    }
+
+    function updateCategoryList() {
+      const categories = [...new Set(posts.map(p => p.category).filter(Boolean))];
+      const datalist = document.getElementById('categoryList');
+      const categoriesList = document.getElementById('categoriesList');
+
+      datalist.innerHTML = categories.map(cat => `<option value="${cat}">`).join('');
+
+      if (categories.length === 0) {
+        categoriesList.innerHTML = '<span style="color: var(--muted);">暂无分类</span>';
+      } else {
+        categoriesList.innerHTML = categories.map(cat => `
+          <span class="category-chip" onclick="selectCategory('${cat}')" data-category="${cat}">${cat}</span>
+        `).join('');
+      }
+
+      highlightCurrentCategory();
+    }
+
+    function selectCategory(category) {
+      document.getElementById('category').value = category;
+      highlightCurrentCategory();
+      showStatus(`已选择分类：${category}`, 'success');
+    }
+
+    function highlightCurrentCategory() {
+      const currentCategory = document.getElementById('category').value.trim();
+      document.querySelectorAll('.category-chip').forEach(chip => {
+        if (chip.dataset.category === currentCategory) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const categoryInput = document.getElementById('category');
+      if (categoryInput) {
+        categoryInput.addEventListener('input', highlightCurrentCategory);
+      }
+    });
+
+    function renderPostList() {
+      const listEl = document.getElementById('postList');
+      if (posts.length === 0) {
+        listEl.innerHTML = `<div class="empty-message">暂无文章</div>`;
+        return;
+      }
+      listEl.innerHTML = posts.map(post => `
+        <div class="post-item ${currentPost?.id === post.id ? 'active' : ''}" onclick="loadPost('${post.id}')">
+          <div class="post-item-title">
+            ${post.title || '未命名'}
+            ${post.draft ? '<span class="badge-draft">草稿</span>' : ''}
+          </div>
+          <div class="post-item-meta">
+            ${post.publishedAt || '无日期'} · ${post.category || '未分类'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadPost(id) {
+      try {
+        const response = await fetch(`/api/posts/${id}`);
+        const post = await response.json();
+        currentPost = post;
+        
+        // Fill form
+        document.getElementById('title').value = post.title || '';
+        document.getElementById('description').value = post.description || '';
+        document.getElementById('publishedAt').value = post.publishedAt || '';
+        document.getElementById('category').value = post.category || '';
+        document.getElementById('filename').value = post.id || '';
+        document.getElementById('cover').value = post.cover || '';
+        document.getElementById('draft').checked = post.draft || false;
+        document.getElementById('content').value = post.content || '';
+        document.getElementById('currentFile').textContent = post.id ? post.id + '.md' : '未命名';
+        
+        tags = post.tags || [];
+        renderTags();
+        updatePreview();
+        renderPostList();
+        
+        showStatus('文章已加载', 'success');
+      } catch (error) {
+        showStatus('加载文章失败', 'error');
+      }
+    }
+
+    function createNewPost() {
+      currentPost = null;
+      document.getElementById('title').value = '';
+      document.getElementById('description').value = '';
+      document.getElementById('publishedAt').value = new Date().toISOString().split('T')[0];
+      document.getElementById('category').value = '';
+      document.getElementById('filename').value = '';
+      document.getElementById('cover').value = '';
+      document.getElementById('draft').checked = true; // 新文章默认存为草稿
+      document.getElementById('content').value = '';
+      document.getElementById('currentFile').textContent = '未命名草稿';
+      
+      tags = [];
+      renderTags();
+      updatePreview();
+      renderPostList();
+      
+      document.getElementById('title').focus();
+      
+      showStatus('新草稿已创建', 'success');
+    }
+
+    function validateForm() {
+      const errors = [];
+      const requiredFields = [
+        { id: 'title', name: '文章标题' },
+        { id: 'category', name: '分类目录' },
+        { id: 'publishedAt', name: '发布日期' }
+      ];
+
+      requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        element.classList.remove('input-error');
+        const existingError = element.parentNode.querySelector('.error-message');
+        if (existingError) {
+          existingError.remove();
+        }
+      });
+
+      requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        const value = element.value.trim();
+        if (!value) {
+          errors.push(field.name);
+          element.classList.add('input-error');
+          const errorMsg = document.createElement('div');
+          errorMsg.className = 'error-message';
+          errorMsg.textContent = `${field.name}不能为空`;
+          element.parentNode.appendChild(errorMsg);
+        }
+      });
+
+      return errors;
+    }
+
+    async function savePost() {
+      const errors = validateForm();
+      if (errors.length > 0) {
+        showStatus(`请填写必填项：${errors.join('、')}`, 'error');
+        if (isMetaCollapsed) {
+          toggleMeta();
+        }
+        return;
+      }
+
+      const title = document.getElementById('title').value.trim();
+      const filename = document.getElementById('filename').value.trim();
+      const isDraft = document.getElementById('draft').checked;
+      
+      if (!title) {
+        showStatus('请输入文章标题', 'error');
+        document.getElementById('title').focus();
+        return;
+      }
+      
+      let finalFilename = filename;
+      if (!finalFilename) {
+        finalFilename = generateSlug(title);
+        document.getElementById('filename').value = finalFilename;
+      }
+
+      const post = {
+        id: finalFilename,
+        title: title,
+        description: document.getElementById('description').value.trim(),
+        publishedAt: document.getElementById('publishedAt').value,
+        category: document.getElementById('category').value.trim(),
+        tags: tags,
+        cover: document.getElementById('cover').value.trim(),
+        draft: isDraft,
+        content: document.getElementById('content').value
+      };
+
+      try {
+        const response = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(post)
+        });
+        
+        if (!response.ok) throw new Error('保存失败');
+        
+        const result = await response.json();
+        
+        // 更新当前文章引用
+        currentPost = { ...post, id: finalFilename };
+        document.getElementById('currentFile').textContent = finalFilename + '.md';
+        
+        // 刷新文章列表
+        await loadPosts();
+        
+        if (isDraft) {
+          showStatus('草稿已保存（不会在博客显示）', 'success');
+        } else {
+          showStatus('文章已发布！请在博客中查看', 'success');
+        }
+      } catch (error) {
+        showStatus('保存失败：' + error.message, 'error');
+      }
+    }
+
+    function generateSlug(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .substring(0, 50);
+    }
+
+    function setupTagInput() {
+      const input = document.getElementById('tagInputField');
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const value = input.value.trim();
+          if (value && !tags.includes(value)) {
+            tags.push(value);
+            renderTags();
+            input.value = '';
+          }
+        }
+        if (e.key === 'Backspace' && !input.value && tags.length > 0) {
+          tags.pop();
+          renderTags();
+        }
+      });
+    }
+
+    function renderTags() {
+      const container = document.getElementById('tagInput');
+      const input = document.getElementById('tagInputField');
+      
+      // Clear existing tags (keep input)
+      const existingTags = container.querySelectorAll('.tag-chip');
+      existingTags.forEach(tag => tag.remove());
+      
+      // Add tags before input
+      tags.forEach((tag, index) => {
+        const chip = document.createElement('div');
+        chip.className = 'tag-chip';
+        chip.innerHTML = `
+          ${escapeHtml(tag)}
+          <button onclick="removeTag(${index})" title="Remove">×</button>
+        `;
+        container.insertBefore(chip, input);
+      });
+    }
+
+    function removeTag(index) {
+      tags.splice(index, 1);
+      renderTags();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function setupAutoPreview() {
+      const content = document.getElementById('content');
+      const title = document.getElementById('title');
+      
+      content.addEventListener('input', updatePreview);
+      title.addEventListener('input', updatePreview);
+    }
+
+    function updatePreview() {
+      const content = document.getElementById('content').value;
+      const title = document.getElementById('title').value;
+      const preview = document.getElementById('preview');
+
+      if (!content && !title) {
+        preview.innerHTML = '<div class="empty-message">预览内容将在这里显示...</div>';
+        return;
+      }
+
+      let html = '';
+      if (title) {
+        html += `<h1>${escapeHtml(title)}</h1>`;
+      }
+      if (content) {
+        marked.use({
+          gfm: true,
+          breaks: true
+        });
+        html += marked.parse(content);
+      }
+      preview.innerHTML = html;
+    }
+
+    function setupAutoSave() {
+      let timeout;
+      const inputs = document.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            // Optional: Auto-save draft to localStorage
+            saveToLocalStorage();
+          }, 3000);
+        });
+      });
+      
+      // Load from localStorage on startup
+      loadFromLocalStorage();
+    }
+
+    function saveToLocalStorage() {
+      const data = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        publishedAt: document.getElementById('publishedAt').value,
+        category: document.getElementById('category').value,
+        filename: document.getElementById('filename').value,
+        cover: document.getElementById('cover').value,
+        draft: document.getElementById('draft').checked,
+        content: document.getElementById('content').value,
+        tags: tags
+      };
+      localStorage.setItem('editorDraft', JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('editorDraft');
+      if (saved && !currentPost) {
+        try {
+          const data = JSON.parse(saved);
+          if (data.title || data.content) {
+            // Only restore if user hasn't loaded an existing post
+            document.getElementById('title').value = data.title || '';
+            document.getElementById('description').value = data.description || '';
+            document.getElementById('publishedAt').value = data.publishedAt || new Date().toISOString().split('T')[0];
+            document.getElementById('category').value = data.category || '';
+            document.getElementById('filename').value = data.filename || '';
+            document.getElementById('cover').value = data.cover || '';
+            document.getElementById('draft').checked = data.draft !== undefined ? data.draft : true;
+            document.getElementById('content').value = data.content || '';
+            tags = data.tags || [];
+            renderTags();
+            updatePreview();
+          }
+        } catch (e) {
+          console.error('Failed to load draft', e);
+        }
+      }
+    }
+
+    function insertMarkdown(before, after) {
+      const textarea = document.getElementById('content');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selected = text.substring(start, end);
+
+      const newText = text.substring(0, start) + before + selected + after + text.substring(end);
+      textarea.value = newText;
+
+      textarea.focus();
+      textarea.selectionStart = start + before.length;
+      textarea.selectionEnd = start + before.length + selected.length;
+
+      updatePreview();
+    }
+
+    async function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // 检查文件类型
+      if (!file.type.startsWith('image/')) {
+        showStatus('请选择图片文件', 'error');
+        return;
+      }
+
+      // 检查文件大小（限制 5MB）
+      if (file.size > 5 * 1024 * 1024) {
+        showStatus('图片大小不能超过 5MB', 'error');
+        return;
+      }
+
+      showStatus('正在上传图片...', 'normal');
+
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // 在编辑器中插入图片 markdown
+          const imageMarkdown = `![${file.name}](${result.url})`;
+          insertMarkdown(imageMarkdown, '');
+          showStatus(`图片已上传: ${result.filename}`, 'success');
+        } else {
+          showStatus('上传失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        showStatus('上传失败: ' + error.message, 'error');
+      }
+
+      // 清空 input，允许重复选择同一文件
+      event.target.value = '';
+    }
+
+    function showStatus(message, type = 'normal') {
+      const statusBar = document.getElementById('statusBar');
+      const statusMessage = document.getElementById('statusMessage');
+      const statusIcon = document.getElementById('statusIcon');
+      
+      statusMessage.textContent = message;
+      statusBar.className = 'status-pill show';
+      
+      if (type === 'error') {
+        statusBar.classList.add('error');
+        statusIcon.textContent = '✕';
+      } else if (type === 'success') {
+        statusBar.classList.add('success');
+        statusIcon.textContent = '✓';
+      } else {
+        statusIcon.textContent = '✦';
+      }
+      
+      setTimeout(() => {
+        statusBar.classList.remove('show');
+        setTimeout(() => {
+          statusBar.classList.remove('error', 'success');
+        }, 400);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

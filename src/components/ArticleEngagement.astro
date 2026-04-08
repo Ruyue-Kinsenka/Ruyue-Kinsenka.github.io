@@ -3,82 +3,68 @@ interface Props {
   path: string;
   title: string;
 }
-
 const { path, title } = Astro.props;
 ---
-
-<section class="article-engagement" aria-label="文章互动">
-  <div class="stat-card" data-view-card>
-    <span aria-hidden="true">👁</span>
-    <span>阅读量</span>
-    <strong data-view-count>0</strong>
+<div style="display: flex; justify-content: center; gap: 4rem; padding: 4rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 4rem 0;">
+  <div data-view-card style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <span style="font-size: 0.65rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);">Views</span>
+    <strong data-view-count style="font-family: var(--font-serif); font-size: 2rem; font-weight: 400;">0</strong>
   </div>
-
-  <button class="like-button" data-like-button type="button" aria-label="点赞这篇文章">
-    <span aria-hidden="true">❤</span>
-    <span>点赞</span>
-    <strong data-like-count>0</strong>
+  <button data-like-button type="button" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: transparent; border: none; cursor: pointer; outline: none; color: inherit; transition: opacity 0.3s;">
+    <span style="font-size: 0.65rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);">Appreciate</span>
+    <strong data-like-count style="font-family: var(--font-serif); font-size: 2rem; font-weight: 400;">0</strong>
   </button>
-</section>
-
+</div>
 <script is:inline define:vars={{ path, title }}>
   const keyBase = `ruyue-blog:${path}`;
   const viewKey = `${keyBase}:views`;
   const likedKey = `${keyBase}:liked`;
   const likeCountKey = `${keyBase}:likes`;
   const sessionViewKey = `${keyBase}:session-viewed`;
-
   const viewNode = document.querySelector("[data-view-count]");
   const likeNode = document.querySelector("[data-like-count]");
   const likeButton = document.querySelector("[data-like-button]");
-
   const readNum = (key, fallback = 0) => {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
     const parsed = Number.parseInt(raw, 10);
     return Number.isNaN(parsed) ? fallback : parsed;
   };
-
   const writeNum = (key, value) => {
     localStorage.setItem(key, String(Math.max(0, value)));
   };
-
   const syncView = () => {
     const viewed = sessionStorage.getItem(sessionViewKey);
     let views = readNum(viewKey, 0);
-
     if (!viewed) {
       views += 1;
       writeNum(viewKey, views);
       sessionStorage.setItem(sessionViewKey, "1");
     }
-
     if (viewNode) viewNode.textContent = String(views);
   };
-
   const syncLike = () => {
     let likes = readNum(likeCountKey, 0);
     const liked = localStorage.getItem(likedKey) === "1";
-
     if (likeNode) likeNode.textContent = String(likes);
-    if (likeButton) likeButton.classList.toggle("is-liked", liked);
-
+    if (likeButton && liked) {
+      likeButton.style.opacity = '0.5';
+    }
     likeButton?.addEventListener("click", () => {
       const currentLiked = localStorage.getItem(likedKey) === "1";
       likes = readNum(likeCountKey, likes);
       const nextLiked = !currentLiked;
-
       if (nextLiked) {
         likes += 1;
       } else {
         likes = Math.max(0, likes - 1);
       }
-
       localStorage.setItem(likedKey, nextLiked ? "1" : "0");
       writeNum(likeCountKey, likes);
       if (likeNode) likeNode.textContent = String(likes);
-      if (likeButton) likeButton.classList.toggle("is-liked", nextLiked);
-
+      if (likeButton) {
+        likeButton.style.opacity = nextLiked ? '0.5' : '1';
+      }
       if (typeof window !== "undefined" && "dispatchEvent" in window) {
         window.dispatchEvent(
           new CustomEvent("post-liked", {
@@ -93,7 +79,6 @@ const { path, title } = Astro.props;
       }
     });
   };
-
   syncView();
   syncLike();
 </script>

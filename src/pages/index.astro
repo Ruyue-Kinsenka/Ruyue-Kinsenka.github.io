@@ -1,60 +1,40 @@
 ---
-import Hero from "@/components/Hero.astro";
 import PostCard from "@/components/PostCard.astro";
-import TagCloud from "@/components/TagCloud.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
-import { getCategorySummary, getPublishedPosts, getTagSummary } from "@/utils/posts";
-
+import { getPublishedPosts } from "@/utils/posts";
 const posts = await getPublishedPosts();
-const latest = posts.slice(0, 9);
-const categories = await getCategorySummary();
-const tags = await getTagSummary();
+const latest = posts.slice(0, 6);
 ---
-
 <BaseLayout title={SITE.title} description={SITE.description}>
-  <Hero />
-
+  <div class="hero-section">
+    <h1 class="hero-title">
+      Miko‘s blog,
+    </h1>
+    <h1 class="hero-title">
+      Write down my <span class="highlight-neon"><i>life</i></span> and my notes.
+    </h1>
+    <p class="hero-subtitle">
+      The sea I hang upside down will be your sky.
+    </p>
+  </div>
   <section>
-    <h2 class="page-title">最新文章</h2>
-    <p class="page-subtitle">共 {posts.length} 篇，按发布时间倒序展示。</p>
-
+    <h2 class="section-heading">Selected Journal</h2>
     {
       latest.length === 0 ? (
-        <article class="panel">
-          <p class="muted">还没有发布文章。你可以在 /admin 页面创建第一篇内容。</p>
-        </article>
+        <div style="padding: 4rem 0; color: var(--muted); font-size: 0.85rem; text-transform: uppercase;">No entries yet.</div>
       ) : (
-        <div class="grid post-grid">
+        <div class="grid-standard">
           {latest.map((post) => <PostCard post={post} />)}
         </div>
       )
     }
   </section>
-
-  <section class="grid" style="margin-top: 1.5rem; grid-template-columns: 1fr 1fr;">
-    <article class="panel">
-      <h2>分类导航</h2>
-      {
-        categories.length === 0 ? (
-          <p class="muted">暂无分类。</p>
-        ) : (
-          <ul class="muted">
-            {
-              categories.map((item) => (
-                <li>
-                  <a href={`/categories/${encodeURIComponent(item.name)}/`}>
-                    {item.name} ({item.count})
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        )
-      }
-      <a class="btn btn-secondary" href="/categories/">查看全部分类</a>
-    </article>
-
-    <TagCloud tags={tags.slice(0, 20)} />
-  </section>
+  {
+    posts.length > 6 && (
+      <div style="text-align: center; margin-top: 6rem;">
+        <a href="/posts/" class="btn-elegant">View Full Archive</a>
+      </div>
+    )
+  }
 </BaseLayout>

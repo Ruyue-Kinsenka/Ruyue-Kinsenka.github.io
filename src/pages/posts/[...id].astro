@@ -1,14 +1,11 @@
 ---
 import { render } from "astro:content";
 import ArticleEngagement from "@/components/ArticleEngagement.astro";
-import Comments from "@/components/Comments.astro";
 import PostMeta from "@/components/PostMeta.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getPostUrl, getPublishedPosts } from "@/utils/posts";
-
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
-
   return posts.map((post) => ({
     params: {
       id: post.id
@@ -18,33 +15,27 @@ export async function getStaticPaths() {
     }
   }));
 }
-
 const { post } = Astro.props;
 const { Content } = await render(post);
 const urlPath = getPostUrl(post);
 ---
-
 <BaseLayout title={`${post.data.title} · Ruyue`} description={post.data.description}>
-  <article class="article-shell">
-    <h1>{post.data.title}</h1>
-    <p class="page-subtitle">{post.data.description}</p>
-
+  <header class="article-header">
     <PostMeta post={post} />
-
-    {
-      post.data.cover && (
-        <figure class="article-cover">
-          <img src={post.data.cover} alt={post.data.coverAlt ?? post.data.title} loading="lazy" />
-        </figure>
-      )
-    }
-
-    <div class="article-content">
-      <Content />
+    <h1 class="article-title">{post.data.title}</h1>
+    <p style="font-size: 1.1rem; color: var(--muted); font-weight: 300;">{post.data.description}</p>
+  </header>
+  {
+    post.data.cover && (
+      <div class="article-hero-wrap">
+        <img src={post.data.cover} alt={post.data.coverAlt ?? post.data.title} class="article-hero-image" />
+      </div>
+    )
+  }
+  <article class="prose">
+    <Content />
+    <div style="margin-top: 6rem;">
+      <ArticleEngagement path={urlPath} title={post.data.title} />
     </div>
-
-    <ArticleEngagement path={urlPath} title={post.data.title} />
   </article>
-
-  <Comments path={urlPath} title={post.data.title} />
 </BaseLayout>

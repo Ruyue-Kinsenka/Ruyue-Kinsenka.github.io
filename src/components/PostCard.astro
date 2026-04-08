@@ -1,32 +1,32 @@
 ---
 import type { PostEntry } from "@/utils/posts";
 import { formatDate, getPostUrl, summarize } from "@/utils/posts";
-
 interface Props {
   post: PostEntry;
 }
-
 const { post } = Astro.props;
+const hasCover = post.data.cover;
 ---
-
 <article class="post-card">
-  <a class="post-card-cover" href={getPostUrl(post)} aria-label={`阅读《${post.data.title}》`}></a>
-  <div class="post-card-content">
-    <div class="post-card-meta">
-      <span>{formatDate(post.data.publishedAt)}</span>
-      <span> · </span>
-      <a href={`/categories/${encodeURIComponent(post.data.category)}/`}>{post.data.category}</a>
-    </div>
-    <h3>
-      <a href={getPostUrl(post)}>{post.data.title}</a>
-    </h3>
-    <p>{post.data.description || summarize(post.body ?? "", 140)}</p>
-    {
-      post.data.tags.length > 0 && (
-        <div class="chips">
-          {post.data.tags.slice(0, 4).map((tag) => <a class="chip" href={`/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>)}
-        </div>
-      )
-    }
+  <div class="post-card-cover-container">
+    <a href={getPostUrl(post)} class="post-card-cover-wrap">
+      {
+        hasCover ? (
+          <img src={post.data.cover} alt="" class="post-card-cover" loading="lazy" />
+        ) : (
+          <div class="post-card-cover"></div>
+        )
+      }
+    </a>
   </div>
+  <div class="post-card-meta">
+    <span>{post.data.category}</span>
+    <span>{formatDate(post.data.publishedAt)}</span>
+  </div>
+  <h3 class="post-card-title">
+    <a href={getPostUrl(post)}>{post.data.title}</a>
+  </h3>
+  <p class="post-card-desc">
+    {post.data.description || summarize(post.body ?? "", 140)}
+  </p>
 </article>

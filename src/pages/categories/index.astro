@@ -1,31 +1,29 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCategorySummary } from "@/utils/posts";
-
 const categories = await getCategorySummary();
 ---
-
-<BaseLayout title="全部分类 · Ruyue" description="按主题分类浏览所有文章">
-  <section class="panel">
-    <h1 class="page-title">分类</h1>
-    <p class="page-subtitle">共 {categories.length} 个分类。</p>
-
+<BaseLayout title="Directories" description="Journal categories">
+  <div style="margin-bottom: 5rem;">
+    <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4rem);">Directories.</h1>
+    <p style="color: var(--muted); font-size: 1.1rem; font-weight: 300;">Explorations organized by topic.</p>
+  </div>
+  <div>
     {
       categories.length === 0 ? (
-        <p class="muted">还没有可展示的分类。</p>
+        <p style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase;">No categories found.</p>
       ) : (
-        <ul class="muted">
+        <div style="display: flex; flex-direction: column;">
           {
             categories.map((item) => (
-              <li>
-                <a href={`/categories/${encodeURIComponent(item.name)}/`}>
-                  {item.name} ({item.count})
-                </a>
-              </li>
+              <a href={`/categories/${encodeURIComponent(item.name)}/`} class="list-item-row">
+                <h3 class="list-item-title">{item.name}</h3>
+                <span class="list-item-meta">{item.count} Entries</span>
+              </a>
             ))
           }
-        </ul>
+        </div>
       )
     }
-  </section>
+  </div>
 </BaseLayout>

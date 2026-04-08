@@ -2,14 +2,14 @@
 import TagCloud from "@/components/TagCloud.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getTagSummary } from "@/utils/posts";
-
 const tags = await getTagSummary();
 ---
-
-<BaseLayout title="全部标签 · Ruyue" description="按标签探索文章主题">
-  <section>
-    <h1 class="page-title">标签</h1>
-    <p class="page-subtitle">共 {tags.length} 个标签。</p>
+<BaseLayout title="Index" description="Metadata index">
+  <div style="margin-bottom: 5rem;">
+    <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4rem);">Index.</h1>
+    <p style="color: var(--muted); font-size: 1.1rem; font-weight: 300;">A structured mapping of metadata tags.</p>
+  </div>
+  <div>
     <TagCloud tags={tags} />
-  </section>
+  </div>
 </BaseLayout>

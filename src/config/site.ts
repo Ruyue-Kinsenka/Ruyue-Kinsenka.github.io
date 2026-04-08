@@ -7,12 +7,11 @@ export const SITE = {
 
 export const NAV_ITEMS = [
   { label: "首页", href: "/" },
+  { label: "文章", href: "/posts/" },
   { label: "分类", href: "/categories/" },
   { label: "标签", href: "/tags/" },
-  { label: "搜索", href: "/search/" },
-  { label: "管理", href: "/admin/" }
+  { label: "关于", href: "/about/" },
+  { label: "搜索", href: "/search/" }
 ];
 
-export const WALINE = {
-  serverURL: import.meta.env.PUBLIC_WALINE_SERVER_URL ?? ""
-};
+

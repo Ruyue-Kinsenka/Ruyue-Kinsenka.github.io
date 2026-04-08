@@ -9,13 +9,13 @@ const posts = defineCollection({
   }),
   schema: z.object({
     title: z.string().min(1),
-    description: z.string().min(1).max(220),
+    description: z.string().max(220).nullable().default(""),
     publishedAt: z.coerce.date(),
     updatedAt: z.coerce.date().optional(),
     category: z.string().min(1),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
-    cover: z.string().optional(),
+    cover: z.string().default("/images/cover.jpg"),
     coverAlt: z.string().optional()
   })
 });

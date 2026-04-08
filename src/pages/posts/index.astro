@@ -2,22 +2,19 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostCard from "@/components/PostCard.astro";
 import { getPublishedPosts } from "@/utils/posts";
-
 const posts = await getPublishedPosts();
 ---
-
-<BaseLayout title="文章归档 · Ruyue" description="全部文章归档">
+<BaseLayout title="Archive" description="All journal entries">
+  <div style="margin-bottom: 5rem;">
+    <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4rem);">The Archive.</h1>
+    <p style="color: var(--muted); font-size: 1.1rem; font-weight: 300;">My Life and My Life.</p>
+  </div>
   <section>
-    <h1 class="page-title">文章归档</h1>
-    <p class="page-subtitle">共 {posts.length} 篇文章。</p>
-
     {
       posts.length === 0 ? (
-        <article class="panel">
-          <p class="muted">暂无文章。</p>
-        </article>
+        <div style="padding: 4rem 0; color: var(--muted); font-size: 0.85rem; text-transform: uppercase;">Empty archive</div>
       ) : (
-        <div class="grid post-grid">
+        <div class="grid-standard">
           {posts.map((post) => <PostCard post={post} />)}
         </div>
       )
