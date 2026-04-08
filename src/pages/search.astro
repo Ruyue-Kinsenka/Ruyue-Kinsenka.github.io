@@ -70,8 +70,12 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       clearTimeout(timer);
       timer = setTimeout(() => performSearch(e.target.value), 200);
     });
-    fetch("/search-index.json")
-      .then((res) => res.json())
+    const indexUrl = new URL("/search-index.json", window.location.origin).href;
+    fetch(indexUrl)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((payload) => {
         data = payload;
         statsNode.innerHTML = `Index loaded. ${data.length} records.`;
@@ -81,8 +85,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
           performSearch(query);
         }
       })
-      .catch(() => {
-        statsNode.innerHTML = `Error loading index.`;
+      .catch((err) => {
+        console.error('Search index load error:', err);
+        statsNode.innerHTML = `Error loading index. Please try again.`;
       });
   </script>
 </BaseLayout>
