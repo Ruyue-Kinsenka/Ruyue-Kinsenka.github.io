@@ -179,7 +179,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/api/posts/') && req.method === 'GET') {
-    const id = pathname.replace('/api/posts/', '');
+    const id = decodeURIComponent(pathname.replace('/api/posts/', ''));
     const posts = await getPosts();
     const post = posts.find(p => p.id === id);
     if (post) {

@@ -891,8 +891,10 @@
         listEl.innerHTML = `<div class="empty-message">暂无文章</div>`;
         return;
       }
-      listEl.innerHTML = posts.map(post => `
-        <div class="post-item ${currentPost?.id === post.id ? 'active' : ''}" onclick="loadPost('${post.id}')">
+      listEl.innerHTML = posts.map(post => {
+        const encodedId = encodeURIComponent(post.id);
+        return `
+        <div class="post-item ${currentPost?.id === post.id ? 'active' : ''}" onclick="loadPost('${encodedId}')">
           <div class="post-item-title">
             ${post.title || '未命名'}
             ${post.draft ? '<span class="badge-draft">草稿</span>' : ''}
@@ -901,7 +903,7 @@
             ${post.publishedAt || '无日期'} · ${post.category || '未分类'}
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     async function loadPost(id) {
