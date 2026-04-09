@@ -59,6 +59,20 @@ import { SITE } from "@/config/site";
       </div>
     </section>
 
+    <!-- Friends Section -->
+    <section class="about-section">
+      <h2 class="section-title">friends</h2>
+      <div class="friends-grid">
+        <a href="https://yuu.ink" target="_blank" rel="noopener" class="friend-card">
+          <img src="/images/yuu.jpg" alt="Friend" class="friend-avatar" />
+          <div class="friend-info">
+            <span class="friend-name">Yuu</span>
+            <span class="friend-bio">一个很厉害的大佬～</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
     <!-- Stats Section -->
     <section class="about-section">
       <h2 class="section-title">link me</h2>
@@ -227,6 +241,58 @@ import { SITE } from "@/config/site";
   .link-desc {
     font-size: 0.85rem;
     color: var(--muted);
+  }
+
+  /* Friends Section */
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .friend-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .friend-card:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .friend-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .friend-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .friend-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .friend-bio {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.4;
   }
 
   .stats-grid {
