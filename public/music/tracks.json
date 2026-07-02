@@ -1,0 +1,136 @@
+{
+  "tracks": [
+    {
+      "id": "1",
+      "title": "青さは止んだ",
+      "artist": "ナナツカゼ",
+      "cover": "avatar.jpeg",
+      "lyrics": [
+        {
+          "text": "今日だって味のしない日々を",
+          "translation": "今天也只是咀嚼着索然无味的日常"
+        },
+        {
+          "text": "噛んで残った",
+          "translation": "咽下后仍残留口中的"
+        },
+        {
+          "text": "苦味ばかりを",
+          "translation": "唯有苦涩"
+        },
+        {
+          "text": "嫌って放って",
+          "translation": "厌恶着 又抛下"
+        },
+        {
+          "text": "僕は変わらないままだ",
+          "translation": "我却依然一成不变"
+        },
+        {
+          "text": "このままでいんだ",
+          "translation": "就这样继续下去吧"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "カタルシス",
+      "artist": "沐月 (moumoon)",
+      "cover": "newmoon.png",
+      "lyrics": [
+        {
+          "text": "この恋が永遠だって うそでもいいから",
+          "translation": "这份恋情是否会永恒 即使是谎言也好"
+        },
+        {
+          "text": "君の言葉で聞かせてよ",
+          "translation": "用你的话语告诉我吧"
+        },
+        {
+          "text": "あきらめるのは上手に",
+          "translation": "虽然对放弃这种事，我愈发熟练"
+        },
+        {
+          "text": "なってゆくけど",
+          "translation": "但如果这样下去"
+        },
+        {
+          "text": "それじゃ心が枯れちゃう",
+          "translation": "我的心将会枯萎"
+        },
+        {
+          "text": "この愛が永遠だって 信じているよ",
+          "translation": "我相信这份爱是永恒的"
+        },
+        {
+          "text": "きみがわたしを強くする",
+          "translation": "是你让我变得坚强"
+        },
+        {
+          "text": "美しすぎる景色に 涙でるのは",
+          "translation": "之所以在看见绝美的景色时泪流满面"
+        },
+        {
+          "text": "隣にきみが居るからだよ",
+          "translation": "是因为你就在身边啊"
+        },
+        {
+          "text": "この手を離さないで おねがいよ",
+          "translation": "拜托，请别放开我的手"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "WALK",
+      "artist": "ビッケブランカ (VK Blanka)",
+      "cover": "xiameng.png", 
+      "lyrics": [
+        {
+          "text": "名前などないが",
+          "translation": "尽管还默默无闻"
+        },
+        {
+          "text": "長い道をきた",
+          "translation": "却已走过很长的路"
+        },
+        {
+          "text": "揺れる想いが",
+          "translation": "心中的动摇"
+        },
+        {
+          "text": "証なんだ",
+          "translation": "证明了这点"
+        },
+        {
+          "text": "その声で",
+          "translation": "你愿意出声"
+        },
+        {
+          "text": "慰めてくれないか",
+          "translation": "安慰我吗"
+        },
+        {
+          "text": "呼ぶ声が",
+          "translation": "那呼唤的声音"
+        },
+        {
+          "text": "標識のような",
+          "translation": "如同路标般的"
+        },
+        {
+          "text": "光や色を抱いて",
+          "translation": "光芒与色彩"
+        },
+        {
+          "text": "さあ歩こう",
+          "translation": "引导我继续前行"
+        },
+        {
+          "text": "歩こう歩こう",
+          "translation": "继续前行"
+        }
+      ]
+    }
+  ]
+}

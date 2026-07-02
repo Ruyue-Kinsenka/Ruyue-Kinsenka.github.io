@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 :root {
   --bg: #F0F6F8; /* Light pastel blue background */
   --text: #0F172A; /* Dark slate text */
@@ -8,6 +8,7 @@
   --accent: #FFB6C1; /* Light pink */
   --font-sans: 'Inter', -apple-system, sans-serif;
   --font-serif: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --font-mono: 'Space Mono', 'SFMono-Regular', Consolas, monospace;
 }
 * {
   box-sizing: border-box;

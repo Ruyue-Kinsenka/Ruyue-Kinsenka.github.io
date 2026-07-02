@@ -3,26 +3,82 @@ import PostCard from "@/components/PostCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
 import { getPublishedPosts } from "@/utils/posts";
+import { getMusicData } from "@/utils/music";
+
 const posts = await getPublishedPosts();
 const latest = posts.slice(0, 6);
+const music = getMusicData();
 ---
+
 <BaseLayout title={SITE.title} description={SITE.description}>
-  <div class="hero-section">
-    <h1 class="hero-title">
-      Miko‘s blog,
-    </h1>
-    <h1 class="hero-title">
-      Write down my <span class="highlight-neon"><i>life</i></span> and my notes.
-    </h1>
-    <p class="hero-subtitle">
-      The sea I hang upside down will be your sky.
-    </p>
-  </div>
-  <section>
+  <section class="music-hero" aria-label="今日宜听">
+    <div class="vinyl-stage">
+      <div class="vinyl-wrapper" id="vinylWrapper">
+        <div class="vinyl-disc">
+          <div class="vinyl-label">
+            <img
+              id="trackCover"
+              src=""
+              alt=""
+              class="vinyl-cover"
+              loading="eager"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="tonearm" aria-hidden="true">
+        <div class="tonearm-base">
+          <div class="tonearm-pivot"></div>
+        </div>
+        <div class="tonearm-arm">
+          <div class="tonearm-head">
+            <div class="tonearm-needle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-info">
+      <p class="music-kicker">play with miko</p>
+      <h1 class="music-title">
+        <span class="title-main">今日宜听</span>
+        <span class="title-shadow" aria-hidden="true">今日宜听</span>
+      </h1>
+
+      <button class="play-button" id="playButton" type="button" aria-label="播放或暂停">
+        <span class="play-icon" id="playIcon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+        </span>
+        <span class="pause-icon" id="pauseIcon" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+          </svg>
+        </span>
+      </button>
+
+      <div class="track-meta" id="trackMeta">
+        <span class="track-title" id="trackTitle"></span>
+        <span class="track-separator">—</span>
+        <span class="track-artist" id="trackArtist"></span>
+      </div>
+
+      <div class="lyrics-stage" aria-live="polite">
+        <p class="lyrics-line" id="lyricsLine"></p>
+        <p class="translation-line" id="translationLine"></p>
+        <div class="lyrics-progress" aria-hidden="true">
+          <span class="lyrics-progress-bar" id="lyricsProgressBar"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journal-section">
     <h2 class="section-heading">Selected Journal</h2>
     {
       latest.length === 0 ? (
-        <div style="padding: 4rem 0; color: var(--muted); font-size: 0.85rem; text-transform: uppercase;">No entries yet.</div>
+        <div class="empty-journal">No entries yet.</div>
       ) : (
         <div class="grid-standard">
           {latest.map((post) => <PostCard post={post} />)}
@@ -30,11 +86,563 @@ const latest = posts.slice(0, 6);
       )
     }
   </section>
+
   {
     posts.length > 6 && (
-      <div style="text-align: center; margin-top: 6rem;">
+      <div class="archive-link">
         <a href="/posts/" class="btn-elegant">View Full Archive</a>
       </div>
     )
   }
 </BaseLayout>
+
+<script define:vars={{ tracks: music.tracks }}>
+  let cleanupMusicHero = null;
+
+  function initMusicHero() {
+    if (cleanupMusicHero) cleanupMusicHero();
+
+    const vinylWrapper = document.getElementById('vinylWrapper');
+    const trackCover = document.getElementById('trackCover');
+    const trackTitle = document.getElementById('trackTitle');
+    const trackArtist = document.getElementById('trackArtist');
+    const playButton = document.getElementById('playButton');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const lyricsLine = document.getElementById('lyricsLine');
+    const translationLine = document.getElementById('translationLine');
+    const lyricsProgressBar = document.getElementById('lyricsProgressBar');
+
+    if (!vinylWrapper || !playButton) return;
+
+    let currentTrack = null;
+    let isPlaying = false;
+    let lyricIndex = 0;
+    let lyricInterval = null;
+    const lyricDuration = 4200;
+
+    function pickRandomTrack() {
+      return tracks[Math.floor(Math.random() * tracks.length)];
+    }
+
+    function renderTrack(track) {
+      currentTrack = track;
+      trackCover.src = `/music/covers/${track.cover}`;
+      trackCover.alt = `${track.title} 封面`;
+      trackTitle.textContent = track.title;
+      trackArtist.textContent = track.artist;
+      lyricIndex = 0;
+      showLyric();
+    }
+
+    function showLyric() {
+      if (!currentTrack || currentTrack.lyrics.length === 0) {
+        lyricsLine.textContent = '';
+        if (translationLine) translationLine.textContent = '';
+        return;
+      }
+
+      const line = currentTrack.lyrics[lyricIndex];
+      const lyricText = typeof line === 'string' ? line : line.text;
+      const translationText = typeof line === 'string' ? '' : line.translation || '';
+
+      lyricsLine.classList.remove('is-visible');
+      if (translationLine) translationLine.classList.remove('is-visible');
+
+      requestAnimationFrame(() => {
+        lyricsLine.textContent = lyricText;
+        lyricsLine.classList.add('is-visible');
+
+        if (translationLine) {
+          translationLine.textContent = translationText;
+          if (translationText) {
+            translationLine.classList.add('is-visible');
+          }
+        }
+      });
+
+      if (lyricsProgressBar) {
+        lyricsProgressBar.style.transition = 'none';
+        lyricsProgressBar.style.width = '0%';
+        requestAnimationFrame(() => {
+          lyricsProgressBar.style.transition = `width ${lyricDuration}ms linear`;
+          lyricsProgressBar.style.width = '100%';
+        });
+      }
+    }
+
+    function advanceLyric() {
+      if (!currentTrack || currentTrack.lyrics.length === 0) return;
+      lyricIndex = (lyricIndex + 1) % currentTrack.lyrics.length;
+      showLyric();
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      vinylWrapper.classList.add('is-playing');
+      playIcon.hidden = true;
+      pauseIcon.hidden = false;
+      advanceLyric();
+      lyricInterval = setInterval(advanceLyric, lyricDuration);
+    }
+
+    function stopPlayback() {
+      isPlaying = false;
+      vinylWrapper.classList.remove('is-playing');
+      playIcon.hidden = false;
+      pauseIcon.hidden = true;
+      clearInterval(lyricInterval);
+    }
+
+    function handlePlayClick() {
+      if (isPlaying) {
+        stopPlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    playButton.addEventListener('click', handlePlayClick);
+
+    cleanupMusicHero = () => {
+      clearInterval(lyricInterval);
+      playButton.removeEventListener('click', handlePlayClick);
+    };
+
+    renderTrack(pickRandomTrack());
+  }
+
+  document.addEventListener('astro:page-load', initMusicHero);
+  initMusicHero();
+</script>
+
+<style>
+  .music-hero {
+    min-height: 78vh;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 4vw;
+    padding: 4rem 0 8rem;
+    position: relative;
+  }
+
+  .vinyl-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 520px;
+  }
+
+  .vinyl-wrapper {
+    position: relative;
+    width: min(420px, 72vw);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .vinyl-disc {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #1a1a1a;
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: spin 4.2s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .vinyl-wrapper.is-playing .vinyl-disc {
+    animation-play-state: running;
+  }
+
+  .vinyl-label {
+    width: 38%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    background: var(--surface);
+    box-shadow: 0 0 0 8px #111;
+  }
+
+  .vinyl-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tonearm {
+    position: absolute;
+    top: 5%;
+    right: 6%;
+    width: 200px;
+    height: 240px;
+    pointer-events: none;
+    transform-origin: 30px 30px;
+    transform: rotate(-46deg);
+    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .vinyl-wrapper.is-playing ~ .tonearm {
+    transform: rotate(-10deg);
+  }
+
+  .tonearm-base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tonearm-pivot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #111;
+  }
+
+  .tonearm-arm {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    width: 168px;
+    height: 10px;
+    border-radius: 5px;
+    transform-origin: left center;
+    transform: rotate(72deg);
+    background: #333;
+  }
+
+  .tonearm-head {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 52px;
+    background: #333;
+    border-radius: 6px 6px 12px 12px;
+  }
+
+  .tonearm-head::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 22px;
+    background: #222;
+    border-radius: 3px;
+  }
+
+  .tonearm-needle {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 18px;
+    background: #111;
+    border-radius: 0 0 2px 2px;
+  }
+
+  .tonearm-needle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 6px;
+    background: #666;
+    border-radius: 0 0 1px 1px;
+  }
+
+  .music-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.75rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .music-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    text-transform: lowercase;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .music-title {
+    position: relative;
+    margin: 0;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .title-main {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+  }
+
+  .title-shadow {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--border);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(0.1em, 0.1em);
+    z-index: 1;
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .play-button {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--text);
+    background: var(--accent);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--text);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 0.5rem;
+  }
+
+  .play-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 var(--text);
+    background: #ffc8d1;
+  }
+
+  .play-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 1px 1px 0 var(--text);
+  }
+
+  .play-button svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+  }
+
+  .pause-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .track-meta {
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    color: var(--text);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+    max-width: 520px;
+  }
+
+  .track-title {
+    font-weight: 700;
+  }
+
+  .track-separator {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .track-artist {
+    color: var(--muted);
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .lyrics-stage {
+    min-height: 120px;
+    max-width: 520px;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .lyrics-line {
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    line-height: 1.55;
+    color: var(--text);
+    margin: 0 0 1rem;
+    min-height: 2.5em;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .lyrics-line.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .translation-line {
+    font-family: var(--font-serif);
+    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    line-height: 1.5;
+    color: var(--muted);
+    margin: -0.5rem 0 1.25rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+
+  .translation-line:empty {
+    display: none;
+  }
+
+  .translation-line.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .lyrics-progress {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .lyrics-progress-bar {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+  }
+
+  .journal-section {
+    padding-top: 4rem;
+  }
+
+  .empty-journal {
+    padding: 4rem 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .archive-link {
+    text-align: center;
+    margin-top: 6rem;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 900px) {
+    .music-hero {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      min-height: auto;
+      padding: 2rem 0 5rem;
+    }
+
+    .vinyl-stage {
+      min-height: auto;
+      order: 1;
+    }
+
+    .music-info {
+      align-items: center;
+      text-align: center;
+      order: 2;
+    }
+
+    .tonearm {
+      width: 130px;
+      height: 160px;
+      top: 2%;
+      right: 3%;
+      transform-origin: 20px 20px;
+      transform: rotate(-46deg);
+    }
+
+    .vinyl-wrapper.is-playing ~ .tonearm {
+      transform: rotate(-12deg);
+    }
+
+    .tonearm-base {
+      width: 40px;
+      height: 40px;
+    }
+
+    .tonearm-pivot {
+      width: 11px;
+      height: 11px;
+    }
+
+    .tonearm-arm {
+      top: 16px;
+      left: 20px;
+      width: 108px;
+      height: 8px;
+      transform: rotate(72deg);
+    }
+
+    .tonearm-head {
+      right: -7px;
+      width: 20px;
+      height: 38px;
+    }
+
+    .tonearm-head::before {
+      width: 11px;
+      height: 15px;
+      top: 5px;
+    }
+
+    .tonearm-needle {
+      bottom: -10px;
+      width: 3px;
+      height: 12px;
+    }
+
+    .tonearm-needle::after {
+      height: 4px;
+    }
+  }
+</style>
