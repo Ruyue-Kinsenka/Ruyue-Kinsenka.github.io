@@ -1,343 +1,639 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SITE } from "@/config/site";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("posts"))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
+
+const lastLogin = new Date().toLocaleString("en-US", {
+  weekday: "short",
+  month: "short",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  year: "numeric"
+});
 ---
 
-<BaseLayout title={`关于 - ${SITE.title}`} description={`关于 ${SITE.author} 的介绍`}>
-  <div class="about-container">
-    <!-- Hero Section -->
-    <section class="about-hero">
-      <div class="avatar-wrapper">
-        <div class="avatar-glow"></div>
-        <img src="/images/avatar.jpeg" alt={SITE.author} class="avatar" />
+<BaseLayout title={`About - ${SITE.title}`} description={`About ${SITE.author} - a pseudo-terminal profile.`}>
+  <div class="terminal-page" id="terminal-page">
+    <div class="terminal-window" id="terminal-window">
+      <div class="terminal-header">
+        <span class="terminal-dot dot-red"></span>
+        <span class="terminal-dot dot-yellow"></span>
+        <span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">shell</span>
       </div>
-      <h1 class="about-title">Miko</h1>
-      <p class="about-subtitle">aka. Ruyue</p>
-    </section>
-
-    <!-- Bio Section -->
-    <section class="about-section">
-      <h2 class="section-title">about me</h2>
-      <div class="about-content">
-        <p>
-          Nice to see u again :3
-        </p>
-        <p>
-          我想在这里分享我的日常
-          ，同时也为了满足某个超级无敌可爱家伙的探索欲～
-        </p>
-        <p>
-          今天你又遇到了谁，谁又错过了你呢
-        </p>
-      </div>
-    </section>
-
-    <!-- Links Section -->
-    <section class="about-section">
-      <h2 class="section-title">you found me</h2>
-      <div class="links-grid">
-        <a href="https://github.com/Ruyue-kinsenka" target="_blank" rel="noopener" class="link-card">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          </div>
-          <div class="link-info">
-            <span class="link-name">GitHub</span>
-          </div>
-        </a>
-
-        <a href="mailto:ruyueee@outlook.com" class="link-card">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
-          <div class="link-info">
-            <span class="link-name">Email</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Friends Section -->
-    <section class="about-section">
-      <h2 class="section-title">friends</h2>
-      <div class="friends-grid">
-        <a href="https://yuu.ink" target="_blank" rel="noopener" class="friend-card">
-          <img src="/images/yuu.jpg" alt="Friend" class="friend-avatar" />
-          <div class="friend-info">
-            <span class="friend-name">Yuu</span>
-            <span class="friend-bio">一个很厉害的大佬～</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="about-section">
-      <h2 class="section-title">link me</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-number">∞</span>
-          <span class="stat-label">Finding</span>
+      <div class="terminal-body">
+        <!-- Login sequence -->
+        <div class="terminal-line">
+          <span class="term-cyan">login as:</span>
+          <span class="term-white">miko</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-number">99.999%</span>
-          <span class="stat-label">loving</span>
+        <div class="terminal-line">
+          <span class="term-cyan">miko@ruyue password:</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-number">24/7</span>
-          <span class="stat-label">Thinking</span>
+        <div class="terminal-line term-muted">
+          Last login: {lastLogin} from 127.0.0.1
+        </div>
+      <div class="terminal-line">
+        <span class="term-green">miko@ruyue:~$</span>
+        <span class="term-white">neofetch</span>
+      </div>
+
+      <!-- Static neofetch output -->
+      <div class="neofetch-output" id="neofetch-output">
+        <div class="ascii-art">
+          <img src="/ikachan.svg" alt="ikachan" class="ikachan-art" />
+        </div>
+        <div class="system-info">
+          <div class="info-host">
+            <span class="term-pink">miko@ruyue</span>
+          </div>
+          <div class="info-separator">------------------------</div>
+
+          <div class="info-section">
+            <span class="term-yellow">Name &gt;</span>
+            <span class="term-white">Miko (Ruyue)</span>
+          </div>
+          <div class="info-section">
+            <span class="term-yellow">Blog &gt;</span>
+            <a href="/" class="term-link">ruyue-kinsenka.github.io</a>
+          </div>
+
+          <div class="info-section">
+            <span class="term-yellow">Contact Me &gt;</span>
+          </div>
+          <div class="info-sub">
+            <span class="term-cyan">GitHub:</span>
+            <a href="https://github.com/Ruyue-kinsenka" target="_blank" rel="noopener" class="term-link">github.com/Ruyue-kinsenka</a>
+          </div>
+          <div class="info-sub">
+            <span class="term-cyan">E-mail:</span>
+            <a href="mailto:ruyueee@outlook.com" class="term-link">ruyueee@outlook.com</a>
+          </div>
+
+          <div class="info-section">
+            <span class="term-yellow">Skills &gt;</span>
+          </div>
+          <div class="info-sub">
+            <span class="term-cyan">Programs:</span>
+            <span class="term-white">Java, Kotlin, HTML5 & CSS, C Series, Python 2 & 3</span>
+          </div>
+          <div class="info-sub">
+            <span class="term-cyan">Languages:</span>
+            <span class="term-white">Chinese, English</span>
+          </div>
+
+          <div class="info-section">
+            <span class="term-yellow">Recent Works &gt;</span>
+          </div>
+          <div class="info-works">
+            {posts.map((post) => (
+              <a href={`/posts/${post.id}/`} class="term-link work-link">{post.data.title}</a>
+            ))}
+            <a href="/posts/" class="term-link work-link">View all posts →</a>
+          </div>
         </div>
       </div>
-    </section>
+
+      <div class="terminal-line">
+        <span class="term-green">miko@ruyue:~$</span>
+        <span class="term-white">exit</span>
+      </div>
+      <div class="terminal-line term-muted">
+        logout
+      </div>
+      <div class="terminal-line term-muted">
+        Connection closed by remote host.
+      </div>
+
+      <!-- Dynamic output container -->
+      <div id="dynamic-output"></div>
+
+      <!-- Interactive prompt -->
+      <div class="terminal-line prompt-line">
+        <span class="term-green">miko@ruyue:~$</span>
+        <span class="typed-command" id="typed-command"></span>
+        <span class="cursor" id="cursor">_</span>
+      </div>
+      </div>
+    </div>
+
+    <input
+      type="text"
+      class="terminal-input"
+      id="terminal-input"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      aria-label="Terminal input"
+    />
+
+    <div class="terminal-hint" id="terminal-hint">
+      Type <span class="term-yellow">help</span> and press Enter. Try <span class="term-yellow">neofetch</span>, <span class="term-yellow">friends</span>, or <span class="term-yellow">date</span>.
+    </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      const terminalPage = document.getElementById('terminal-page');
+      const terminalWindow = document.getElementById('terminal-window');
+      const input = document.getElementById('terminal-input');
+      const typed = document.getElementById('typed-command');
+      const cursor = document.getElementById('cursor');
+      const output = document.getElementById('dynamic-output');
+      const hint = document.getElementById('terminal-hint');
+
+      const COMMANDS = {
+        help: {
+          desc: 'show available commands',
+          run: () => `
+            <div class="term-output-block">
+              <div class="term-white">Available commands:</div>
+              <div class="term-grid">
+                <div class="term-row"><span class="term-cyan">about</span><span class="term-muted">${COMMANDS.about.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">links</span><span class="term-muted">${COMMANDS.links.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">friends</span><span class="term-muted">${COMMANDS.friends.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">neofetch</span><span class="term-muted">${COMMANDS.neofetch.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">date</span><span class="term-muted">${COMMANDS.date.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">whoami</span><span class="term-muted">${COMMANDS.whoami.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">echo</span><span class="term-muted">${COMMANDS.echo.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">clear</span><span class="term-muted">${COMMANDS.clear.desc}</span></div>
+                <div class="term-row"><span class="term-cyan">exit</span><span class="term-muted">${COMMANDS.exit.desc}</span></div>
+              </div>
+              <div class="term-muted">Tip: use ↑ / ↓ to browse command history, Tab to autocomplete.</div>
+            </div>
+          `
+        },
+        about: {
+          desc: 'show a short bio',
+          run: () => `
+            <div class="term-output-block">
+              <div class="term-white">Nice to see u again :3</div>
+              <div class="term-muted">我想在这里分享我的日常，同时也为了满足某个超级无敌可爱家伙的探索欲～</div>
+              <div class="term-muted">今天你又遇到了谁，谁又错过了你呢</div>
+            </div>
+          `
+        },
+        links: {
+          desc: 'show contact links',
+          run: () => `
+            <div class="term-output-block">
+              <div class="term-white">You found me:</div>
+              <div><span class="term-cyan">Blog:</span> <a href="/" class="term-link">ruyue-kinsenka.github.io</a></div>
+              <div><span class="term-cyan">GitHub:</span> <a href="https://github.com/Ruyue-kinsenka" target="_blank" rel="noopener" class="term-link">github.com/Ruyue-kinsenka</a></div>
+              <div><span class="term-cyan">Email:</span> <a href="mailto:ruyueee@outlook.com" class="term-link">ruyueee@outlook.com</a></div>
+            </div>
+          `
+        },
+        friends: {
+          desc: 'jump to friends page',
+          run: () => {
+            setTimeout(() => window.location.href = '/friends/', 600);
+            return '<div class="term-output-block term-muted">Redirecting to /friends/ ...</div>';
+          }
+        },
+        neofetch: {
+          desc: 'show profile card again',
+          run: () => {
+            const el = document.getElementById('neofetch-output');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.classList.add('pulse-glow');
+              setTimeout(() => el.classList.remove('pulse-glow'), 1200);
+            }
+            return '<div class="term-output-block term-muted">Profile card highlighted above ↑</div>';
+          }
+        },
+        date: {
+          desc: 'show current date and time',
+          run: () => `<div class="term-output-block term-white">${new Date().toString()}</div>`
+        },
+        whoami: {
+          desc: 'show current user',
+          run: () => '<div class="term-output-block term-white">guest</div>'
+        },
+        echo: {
+          desc: 'echo your text back',
+          run: (args) => `<div class="term-output-block term-white">${escapeHtml(args.join(' ') || '')}</div>`
+        },
+        clear: {
+          desc: 'clear dynamic output',
+          run: () => {
+            if (output) output.innerHTML = '';
+            return '';
+          }
+        },
+        exit: {
+          desc: 'close the session',
+          run: () => {
+            setTimeout(() => {
+              const goodbye = document.createElement('div');
+              goodbye.className = 'terminal-line term-muted';
+              goodbye.textContent = 'bye bye ~';
+              terminalWindow.appendChild(goodbye);
+              terminalWindow.scrollTop = terminalWindow.scrollHeight;
+            }, 300);
+            return '<div class="term-output-block term-muted">logout</div>';
+          }
+        }
+      };
+
+      const ALIASES = {
+        ls: 'help',
+        cat: 'about',
+        me: 'about',
+        contact: 'links'
+      };
+
+      let history = [];
+      let historyIndex = -1;
+      let currentValue = '';
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function renderPrompt(value) {
+        if (typed) typed.textContent = value;
+      }
+
+      function appendLine(html) {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = html;
+        output.appendChild(line);
+      }
+
+      function execute(raw) {
+        const trimmed = raw.trim();
+        if (!trimmed) return;
+
+        history.push(trimmed);
+        historyIndex = history.length;
+
+        const parts = trimmed.split(/\s+/);
+        const cmdName = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        const resolved = ALIASES[cmdName] || cmdName;
+        const command = COMMANDS[resolved];
+
+        appendLine(`<span class="term-green">miko@ruyue:~$</span> <span class="term-white">${escapeHtml(trimmed)}</span>`);
+
+        let result = '';
+        if (command) {
+          result = command.run(args);
+        } else {
+          result = `<div class="term-output-block"><span class="term-pink">${escapeHtml(cmdName)}:</span> <span class="term-white">command not found</span><div class="term-muted">Type 'help' for a list of commands.</div></div>`;
+        }
+
+        if (result) {
+          const res = document.createElement('div');
+          res.className = 'terminal-line';
+          res.innerHTML = result;
+          output.appendChild(res);
+        }
+
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        terminalWindow.scrollTop = terminalWindow.scrollHeight;
+        terminalPage.scrollTop = terminalPage.scrollHeight;
+      }
+
+      function autocomplete() {
+        const value = input.value.toLowerCase();
+        if (!value) return;
+        const matches = Object.keys(COMMANDS).filter(c => c.startsWith(value));
+        if (matches.length === 1) {
+          input.value = matches[0];
+          renderPrompt(matches[0]);
+        } else if (matches.length > 1) {
+          appendLine(`<span class="term-green">miko@ruyue:~$</span> <span class="term-white">${escapeHtml(value)}</span>`);
+          const res = document.createElement('div');
+          res.className = 'terminal-line';
+          res.innerHTML = `<div class="term-output-block"><span class="term-muted">${matches.join('  ')}</span></div>`;
+          output.appendChild(res);
+          scrollToBottom();
+        }
+      }
+
+      if (input) {
+        input.addEventListener('input', (e) => {
+          renderPrompt(e.target.value);
+          if (hint) hint.style.opacity = e.target.value ? '0' : '1';
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            execute(input.value);
+            input.value = '';
+            renderPrompt('');
+            if (hint) hint.style.opacity = '1';
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+              if (historyIndex === history.length) currentValue = input.value;
+              historyIndex--;
+              input.value = history[historyIndex];
+              renderPrompt(input.value);
+            }
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex < history.length - 1) {
+              historyIndex++;
+              input.value = history[historyIndex];
+              renderPrompt(input.value);
+            } else if (historyIndex === history.length - 1) {
+              historyIndex = history.length;
+              input.value = currentValue;
+              renderPrompt(currentValue);
+            }
+          } else if (e.key === 'Tab') {
+            e.preventDefault();
+            autocomplete();
+          }
+        });
+      }
+
+      terminalPage.addEventListener('click', () => {
+        input.focus();
+      });
+
+      // Cursor blink
+      setInterval(() => {
+        if (cursor) cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+      }, 530);
+
+      // Focus input on load
+      setTimeout(() => input.focus(), 300);
+    })();
+  </script>
+
+  <style is:global>
+    .terminal-page {
+      min-height: calc(100vh - 200px);
+      padding: 1rem 0 2rem;
+      background: transparent;
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', Consolas, monospace;
+      position: relative;
+      cursor: text;
+    }
+
+    .terminal-page *:focus {
+      outline: none;
+    }
+
+    .terminal-window {
+      width: 1200px;
+      max-width: calc(100vw - 2rem);
+      margin: 0 auto;
+      font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+      line-height: 1.35;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.85rem 1.1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .terminal-title {
+      margin-left: 0.6rem;
+      font-size: 0.8em;
+      color: var(--muted);
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .terminal-body {
+      padding: 1.25rem 1.5rem 1.5rem 1.1rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: calc(100vh - 260px);
+    }
+
+    .terminal-line {
+      word-break: break-word;
+      margin-bottom: 0.15rem;
+    }
+
+
+
+    .term-cyan { color: #15803d; }
+    .term-green { color: #15803d; }
+    .term-pink { color: #db2777; }
+    .term-yellow { color: #a16207; }
+    .term-white { color: var(--text); }
+    .term-muted { color: var(--muted); }
+
+    .term-link {
+      color: #2563eb;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s ease;
+    }
+    .term-link:hover {
+      color: #db2777;
+    }
+
+    .neofetch-output {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 3rem;
+      align-items: start;
+      margin: 1rem 0 1.5rem;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .neofetch-output.pulse-glow {
+      box-shadow: 0 0 24px rgba(255, 182, 193, 0.45);
+    }
+
+    .ascii-art {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ikachan-art {
+      width: 360px;
+      max-width: 45vw;
+      height: auto;
+      filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.12));
+    }
+
+    .system-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .info-host {
+      font-weight: 700;
+      font-size: 1.05em;
+      margin-bottom: 0.1rem;
+    }
+
+    .info-separator {
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-section {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+
+    .info-sub {
+      padding-left: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .info-works {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-left: 1rem;
+    }
+
+    .work-link {
+      display: block;
+    }
+
+    .prompt-line {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .typed-command {
+      color: var(--text);
+      min-width: 1ch;
+    }
+
+    .cursor {
+      color: #db2777;
+      font-weight: 700;
+      animation: none;
+    }
+
+    .terminal-input {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: auto;
+      border: none;
+      outline: none;
+      background: transparent;
+    }
+
+    .terminal-hint {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.6rem 1rem;
+      background: color-mix(in srgb, var(--surface) 75%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      transition: opacity 0.3s ease;
+      z-index: 20;
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .term-output-block {
+      padding: 0.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      white-space: normal;
+    }
+
+    .term-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 0.5rem 0;
+      white-space: normal;
+    }
+
+    .term-row {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    .term-row .term-cyan {
+      min-width: 6.5ch;
+    }
+
+    @media (max-width: 860px) {
+      .neofetch-output {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .ascii-art {
+        justify-content: flex-start;
+      }
+      .ikachan-art {
+        width: 260px;
+        max-width: 55vw;
+      }
+      .terminal-body {
+        padding: 1rem 1rem 1rem 0.85rem;
+      }
+      .terminal-page {
+        padding: 1rem 0 4rem;
+      }
+      .terminal-hint {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
 </BaseLayout>
-
-<style>
-  .about-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-  }
-
-  .about-hero {
-    text-align: center;
-    margin-bottom: 5rem;
-    padding: 3rem 0;
-  }
-
-  .avatar-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 2rem;
-  }
-
-  .avatar-glow {
-    position: absolute;
-    inset: -10px;
-    background: linear-gradient(135deg, var(--accent), var(--blue-light));
-    border-radius: 50%;
-    opacity: 0.4;
-    filter: blur(20px);
-    animation: pulse 3s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.4; }
-    50% { transform: scale(1.05); opacity: 0.6; }
-  }
-
-  .avatar {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  }
-
-  .about-title {
-    font-family: var(--font-serif);
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem;
-    letter-spacing: -0.02em;
-  }
-
-  .about-subtitle {
-    font-size: 1.1rem;
-    color: var(--muted);
-    font-weight: 400;
-  }
-
-  .about-section {
-    margin-bottom: 4rem;
-  }
-
-  .section-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text);
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .section-title::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 2px;
-    background: var(--text);
-  }
-
-  .about-content {
-    font-size: 1.1rem;
-    line-height: 1.9;
-    color: rgba(15, 23, 42, 0.8);
-  }
-
-  .about-content p {
-    margin-bottom: 1.5rem;
-  }
-
-  .links-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .link-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-
-  .link-card:hover {
-    background: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  }
-
-  .link-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--text);
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .link-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .link-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .link-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--text);
-  }
-
-  .link-desc {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
-  /* Friends Section */
-  .friends-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .friend-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-
-  .friend-card:hover {
-    background: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  }
-
-  .friend-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .friend-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .friend-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--text);
-  }
-
-  .friend-bio {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .stat-card {
-    text-align: center;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-  }
-
-  .stat-number {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-label {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  @media (max-width: 640px) {
-    .about-container {
-      padding: 2rem 1.5rem;
-    }
-
-    .about-title {
-      font-size: 2rem;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .links-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

@@ -1,0 +1,337 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SITE } from "@/config/site";
+---
+
+<BaseLayout title={`友链 - ${SITE.title}`} description={`${SITE.author} 的朋友们和联系方式`}>
+  <div class="friends-container">
+    <!-- Hero Section -->
+    <section class="friends-hero">
+      <div class="avatar-wrapper">
+        <div class="avatar-glow"></div>
+        <img src="/images/avatar.jpeg" alt={SITE.author} class="avatar" />
+      </div>
+      <h1 class="friends-title">Miko</h1>
+      <p class="friends-subtitle">aka. Ruyue</p>
+    </section>
+
+    <!-- Bio Section -->
+    <section class="friends-section">
+      <h2 class="section-title">about me</h2>
+      <div class="friends-content">
+        <p>
+          Nice to see u again :3
+        </p>
+        <p>
+          我想在这里分享我的日常
+          ，同时也为了满足某个超级无敌可爱家伙的探索欲～
+        </p>
+        <p>
+          今天你又遇到了谁，谁又错过了你呢
+        </p>
+      </div>
+    </section>
+
+    <!-- Links Section -->
+    <section class="friends-section">
+      <h2 class="section-title">you found me</h2>
+      <div class="links-grid">
+        <a href="https://github.com/Ruyue-kinsenka" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </div>
+          <div class="link-info">
+            <span class="link-name">GitHub</span>
+          </div>
+        </a>
+
+        <a href="mailto:ruyueee@outlook.com" class="link-card">
+          <div class="link-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="link-info">
+            <span class="link-name">Email</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Friends Section -->
+    <section class="friends-section">
+      <h2 class="section-title">friends</h2>
+      <div class="friends-grid">
+        <a href="https://yuu.ink" target="_blank" rel="noopener" class="friend-card">
+          <img src="/images/yuu.jpg" alt="Friend" class="friend-avatar" />
+          <div class="friend-info">
+            <span class="friend-name">Yuu</span>
+            <span class="friend-bio">一个很厉害的大佬～</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="friends-section">
+      <h2 class="section-title">link me</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number">∞</span>
+          <span class="stat-label">Finding</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">99.999%</span>
+          <span class="stat-label">loving</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">24/7</span>
+          <span class="stat-label">Thinking</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .friends-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .friends-hero {
+    text-align: center;
+    margin-bottom: 5rem;
+    padding: 3rem 0;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+
+  .avatar-glow {
+    position: absolute;
+    inset: -10px;
+    background: linear-gradient(135deg, var(--accent), var(--blue-light, #93c5fd));
+    border-radius: 50%;
+    opacity: 0.4;
+    filter: blur(20px);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.05); opacity: 0.6; }
+  }
+
+  .avatar {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .friends-title {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .friends-subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .friends-section {
+    margin-bottom: 4rem;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-title::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--text);
+  }
+
+  .friends-content {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  .friends-content p {
+    margin-bottom: 1.5rem;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.05));
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .link-card:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .link-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--text);
+    color: #fff;
+    border-radius: 12px;
+  }
+
+  .link-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .link-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .link-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .friend-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.05));
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .friend-card:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .friend-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .friend-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .friend-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .friend-bio {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.05));
+    border-radius: 20px;
+  }
+
+  .stat-number {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .friends-container {
+      padding: 2rem 1.5rem;
+    }
+
+    .friends-title {
+      font-size: 2rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .links-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

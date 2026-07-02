@@ -10,6 +10,7 @@ export const NAV_ITEMS = [
   { label: "文章", href: "/posts/" },
   { label: "分类", href: "/categories/" },
   { label: "标签", href: "/tags/" },
+  { label: "友链", href: "/friends/" },
   { label: "关于", href: "/about/" },
   { label: "搜索", href: "/search/" }
 ];
