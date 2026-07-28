@@ -131,6 +131,30 @@
           "translation": "继续前行"
         }
       ]
+    },
+    {
+      "id": "4",
+      "title": "溺れた魚",
+      "artist": "瑞葵",
+      "cover": "nishuideyu.png",
+      "lyrics": [
+        {
+          "text": "溺れた魚のようにあえいでも",
+          "translation": "即使如溺水的魚般拼命喘息"
+        },
+        {
+          "text": "いつかは悲しみさえ泳いでいける",
+          "translation": "最終也只能吞下無數的傷悲"
+        },
+        {
+          "text": "どんな明日でも暗闇が見せた",
+          "translation": "無論邁向的明日再怎麼黑暗"
+        },
+        {
+          "text": "かすかな光を見つめて",
+          "translation": "也想緊握那片微弱光芒"
+        }
+      ]
     }
   ]
 }
